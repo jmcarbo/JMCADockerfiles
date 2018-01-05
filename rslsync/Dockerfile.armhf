@@ -5,5 +5,5 @@ RUN wget https://github.com/gulien/orbit/releases/download/v2.0.0/orbit_Linux_ar
 RUN tar zxvf resilio-sync_armhf.tar.gz
 RUN tar zxvf orbit_Linux_armv6.tar.gz
 COPY sync.conf.template /sync.conf.template
-CMD /bin/bash -c "/orbit generate -r my_secret=${MY_SECRET} -t /sync.conf.template -o /sync.conf && /rslsync --nodaemon --config /sync.conf"
+CMD /bin/bash -c "/orbit generate -r my_service=${MY_SERVICE} -r my_secret=${MY_SECRET} -t /sync.conf.template -o /sync.conf && /rslsync --nodaemon --config /sync.conf"
 VOLUME /data
