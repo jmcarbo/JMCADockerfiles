@@ -1,1 +1,1 @@
-docker service create --mode global --mount type=bind,source=/data/rslsync,destination=/data -e MY_SECRET=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA --name rslsync jmcarbo/rslsync.armhf
+docker service create --mode global --mount type=bind,source=/data/rslsync,destination=/data -e MY_SECRET=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA --name rslsync --network apps jmcarbo/rslsync.armhf
