@@ -1,0 +1,29 @@
+FROM ubuntu
+
+RUN echo 'syncthing:x:1000:1000::/var/syncthing:/sbin/nologin' >> /etc/passwd \
+    && echo 'syncthing:!::0:::::' >> /etc/shadow \
+    && mkdir /var/syncthing \
+    && chown syncthing /var/syncthing
+
+RUN apt-get update && apt-get install -y curl jq ca-certificates netcat
+
+ENV release=
+ENV platform=arm
+
+RUN set -x \
+    && mkdir /syncthing \
+    && cd /syncthing \
+    && release=${release:-$(curl -s https://api.github.com/repos/syncthing/syncthing/releases/latest | jq -r .tag_name )} \
+    && curl -sLO https://github.com/syncthing/syncthing/releases/download/${release}/syncthing-linux-${platform}-${release}.tar.gz \
+    && curl -sLO https://github.com/syncthing/syncthing/releases/download/${release}/sha256sum.txt.asc \
+    && tar -zxf syncthing-linux-${platform}-${release}.tar.gz \
+    && mv syncthing-linux-${platform}-${release}/syncthing . \
+    && rm -rf syncthing-linux-${platform}-${release} sha256sum.txt.asc syncthing-linux-${platform}-${release}.tar.gz 
+
+USER syncthing
+ENV STNOUPGRADE=1
+
+HEALTHCHECK --interval=1m --timeout=10s \
+  CMD nc -z localhost 22000 || exit 1
+
+ENTRYPOINT ["/syncthing/syncthing", "-home", "/var/syncthing/config", "-gui-address", "0.0.0.0:8384"]
