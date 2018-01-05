@@ -1,0 +1,9 @@
+FROM ubuntu
+RUN apt-get update && apt-get install -y wget
+RUN wget https://download-cdn.resilio.com/stable/linux-armhf/resilio-sync_armhf.tar.gz
+RUN wget https://github.com/gulien/orbit/releases/download/v2.0.0/orbit_Linux_armv6.tar.gz
+RUN tar zxvf resilio-sync_armhf.tar.gz
+RUN tar zxvf orbit_Linux_armv6.tar.gz
+COPY sync.conf.template /sync.conf.template
+CMD /bin/bash -c "/orbit generate -r my_secret=${MY_SECRET} -t /sync.conf.template -o /sync.conf && /rslsync --nodaemon --config /sync.conf"
+VOLUME /data
